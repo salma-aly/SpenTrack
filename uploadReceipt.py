@@ -40,17 +40,12 @@ def detect_text(path):
     texts = response.text_annotations
     print('Texts:')
 
-    #for text in texts:
-    print('\n"{}"'.format(texts[0].description))
+    for text in texts:
+        print('\n"{}"'.format(text.description))
 
-    #started trying to solve for TOTAL:
-    # receipt_text = '\n"{}"'.format(texts[0].description).lower()
-    # foundTotal = receipt_text.find("total")
-    # print (foundTotal)
+        vertices = (['({},{})'.format(vertex.x, vertex.y)
+                    for vertex in text.bounding_poly.vertices])
 
-        # vertices = (['({},{})'.format(vertex.x, vertex.y)
-        #             for vertex in text.bounding_poly.vertices])
-
-        # print('bounds: {}'.format(','.join(vertices)))
+        print('bounds: {}'.format(','.join(vertices)))
 
 detect_text("C:/Users/Ying-Chen/Documents/COEN424/receipt.jpg")
