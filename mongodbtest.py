@@ -1,6 +1,7 @@
 import pymongo
 from flask import Flask, request
 from flask_restful import Resource, Api
+import json
 from json import dumps, load, loads
 from  flask_jsonpify import jsonify
 from google.cloud import vision
@@ -8,6 +9,10 @@ from google.cloud.vision import types
 import io
 from werkzeug.utils import secure_filename
 import os
+from google.oauth2 import id_token
+from google.auth.transport import requests
+
+CLIENT_ID ="1038987562096-v5kdand3fmljgpf99a7rf9re6n2cujov.apps.googleusercontent.com"
 dbclient = pymongo.MongoClient('35.196.76.140',27017,connect=False)
 application = Flask(__name__)
 api = Api(application)
@@ -15,9 +20,37 @@ UPLOAD_FOLDER = '/opt/app/SpenTrack/uploads'
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
 application.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
+def validate_token(token):
+    try:
+        idinfo = id_token.verify_oauth2_token(token, requests.Request(), audience=None)
+
+        # Or, if multiple clients access the backend server:
+        # idinfo = id_token.verify_oauth2_token(token, requests.Request())
+        # if idinfo['aud'] not in [CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3]:
+        #     raise ValueError('Could not verify audience.')
+
+        if idinfo['iss'] not in ['accounts.google.com', 'https://accounts.google.com']:
+            raise ValueError('Wrong issuer.')
+
+        # If auth request is from a G Suite domain:
+        # if idinfo['hd'] != GSUITE_DOMAIN_NAME:
+        #     raise ValueError('Wrong hosted domain.')
+
+        # ID token is valid. Get the user's Google Account ID from the decoded token.
+        userid = idinfo['sub']
+        return userid
+    except ValueError:
+        return "Invalid token"
+
+
 class SpenTrack(Resource):
     def get(self):
-        return("sup")
+        if request.headers["Authorization"]:
+            id = validate_token(request.headers["Authorization"])
+
+            return(id)
+        else:
+            return "Unauthorized"
 
     def post(self):
         print("supp")
