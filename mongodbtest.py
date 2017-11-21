@@ -12,7 +12,6 @@ import os
 from google.oauth2 import id_token
 from google.auth.transport import requests
 
-CLIENT_ID ="1038987562096-v5kdand3fmljgpf99a7rf9re6n2cujov.apps.googleusercontent.com"
 dbclient = pymongo.MongoClient('35.196.76.140',27017,connect=False)
 application = Flask(__name__)
 api = Api(application)
