@@ -21,6 +21,7 @@ application.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 def validate_token(token):
     try:
+        print(os.environ['CLIENT_ID'])
         idinfo = id_token.verify_oauth2_token(token, requests.Request(), os.environ['CLIENT_ID'])
 
         # Or, if multiple clients access the backend server:
