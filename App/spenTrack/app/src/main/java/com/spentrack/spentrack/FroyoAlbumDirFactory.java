@@ -1,13 +1,20 @@
 package com.spentrack.spentrack;
 
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
+        import java.io.File;
 
-public class FroyoAlbumDirFactory extends AppCompatActivity {
+        import android.os.Environment;
+
+public final class FroyoAlbumDirFactory extends AlbumStorageDirFactory {
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_froyo_album_dir_factory);
+    public File getAlbumStorageDir(String albumName) {
+        // TODO Auto-generated method stub
+        return new File(
+                Environment.getExternalStoragePublicDirectory(
+                        Environment.DIRECTORY_PICTURES
+                ),
+                albumName
+        );
     }
 }
+

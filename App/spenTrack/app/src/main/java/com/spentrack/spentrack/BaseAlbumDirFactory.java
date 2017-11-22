@@ -1,13 +1,20 @@
 package com.spentrack.spentrack;
 
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
+import java.io.File;
 
-public class BaseAlbumDirFactory extends AppCompatActivity {
+import android.os.Environment;
+
+public final class BaseAlbumDirFactory extends AlbumStorageDirFactory {
+
+    // Standard storage location for digital camera files
+    private static final String CAMERA_DIR = "/dcim/";
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_base_album_dir_factory);
+    public File getAlbumStorageDir(String albumName) {
+        return new File (
+                Environment.getExternalStorageDirectory()
+                        + CAMERA_DIR
+                        + albumName
+        );
     }
 }
