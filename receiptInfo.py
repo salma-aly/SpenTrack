@@ -6,8 +6,14 @@ import re
 from google.cloud import vision
 from google.cloud.vision import types
 
+#import the google places methods
+from findPlace import getPlace, getPlaceInfo
 
-image_path=os.path.abspath(r"C:\Users\Salma\Documents\CloudProject\SpenTrack\receipts\receipt13.jpg")
+
+# image_path=os.path.abspath(r"C:\Users\Salma\Documents\CloudProject\SpenTrack\receipts\receipt13.jpg")
+
+#change this path accordingly!
+image_path=os.path.abspath(r"C:\Users\Ying-Chen\Documents\COEN424\SpenTrack\receipt4.jpg")
 
 def is_total(number):
 	number=number.replace("$","")
@@ -31,8 +37,8 @@ def detect_text(path):
 
     response = client.text_detection(image=image)
     texts = response.text_annotations
-    print(texts[0].description)
-    print(texts[0].description.lower().split())
+    # print(texts[0].description)
+    # print(texts[0].description.lower().split())
     all_words=texts[0].description.lower().split()
     total_index=0
     for i in range(len(all_words)):
@@ -47,7 +53,7 @@ def detect_text(path):
     		found=True
     		j=j.replace("$","")
     		total_value=float(j)
-    		print("total value is:",total_value)
+    		print("Total value is:",total_value)
     		receipt_info['total']=total_value
     		break
 
@@ -72,4 +78,14 @@ def detect_text(path):
 
     return receipt_info
 
+#MAIN execution
+
+#process receipt using google vision api to obtain a JSON containing: total, shop_name, date, postal_code
 new_receipt= detect_text(image_path)
+
+#total, shop_name, date, postal_code
+# print (new_receipt['total'])
+
+#process receipt data using google places api to obtain precise and more information about the place
+query_result = getPlace(new_receipt['shop_name'], new_receipt['postal_code'])
+getPlaceInfo(query_result)
