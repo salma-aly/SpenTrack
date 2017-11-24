@@ -52,7 +52,7 @@ def getPlaceInfo(query_result):
 
         #some of the information below might not exist for a particular place. ie they don't have a website
 
-        print (place.types)
+        # print (place.types)
         mycategory = getPlaceType(place,categories)
 
         # print ("Address: " + place.formatted_address)
@@ -74,7 +74,7 @@ def getPlaceInfo(query_result):
         placeInfoJson['See place on google maps']=place.url
         placeInfoJson['Rating']=str(place.rating)
 
-        print(placeInfoJson) #print json of the place's information
+        # print(placeInfoJson) #print dict of the place's information
 
         return placeInfoJson
 

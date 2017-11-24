@@ -8,12 +8,12 @@ from google.cloud.vision import types
 
 #import the google places methods
 from findPlace import getPlace, getPlaceInfo
-
+import json
 
 # image_path=os.path.abspath(r"C:\Users\Salma\Documents\CloudProject\SpenTrack\receipts\receipt13.jpg")
 
 #change this path accordingly!
-image_path=os.path.abspath(r"C:\Users\Ying-Chen\Documents\COEN424\SpenTrack\receipt4.jpg")
+image_path=os.path.abspath(r"C:\Users\Ying-Chen\Documents\COEN424\SpenTrack\receipt.jpg")
 
 def is_total(number):
 	number=number.replace("$","")
@@ -53,7 +53,7 @@ def detect_text(path):
     		found=True
     		j=j.replace("$","")
     		total_value=float(j)
-    		print("Total value is:",total_value)
+    		# print("Total value is:",total_value)
     		receipt_info['total']=total_value
     		break
 
@@ -65,27 +65,43 @@ def detect_text(path):
 
     receipt_info["shop_name"]=shop_name
     if(date):
-    	print ("Date of purchase is : ",date.group(0))
+    	# print ("Date of purchase is : ",date.group(0))
     	receipt_info["date"]=date.group(0)
 
     if(postal_code):
-    	print ("Store postal code is : ",postal_code.group(0))
+    	# print ("Store postal code is : ",postal_code.group(0))
     	receipt_info["postal_code"]=postal_code.group(0)
 
-    print ("Store name is : ",shop_name)
+    # print ("Store name is : ",shop_name)
 
-    print(receipt_info)
+    # print(receipt_info)
 
     return receipt_info
 
 #MAIN execution
 
-#process receipt using google vision api to obtain a JSON containing: total, shop_name, date, postal_code
+#process receipt using google vision api to obtain a DICT containing: total, shop_name, date, postal_code
 new_receipt= detect_text(image_path)
-
+print ("Dict from Receipt - vision api: ")
+print (new_receipt)
+print ("\n")
 #total, shop_name, date, postal_code
 # print (new_receipt['total'])
 
 #process receipt data using google places api to obtain precise and more information about the place
 query_result = getPlace(new_receipt['shop_name'], new_receipt['postal_code'])
-getPlaceInfo(query_result)
+placesInfoDict = getPlaceInfo(query_result)
+print ("Dict from Place - places api: ")
+print(placesInfoDict)
+print ("\n")
+
+#Obtain final JSON with spending and place data
+#only get total and date from result of vision API dict
+new_receipt.pop('shop_name', None)
+new_receipt.pop('postal_code', None)
+# print (new_receipt)
+
+new_receipt.update(placesInfoDict) #appends the places data to the remaining receipt dict data
+receipt_and_place_data_JSON = json.dumps(new_receipt) #Transform final dict with data to store to db to JSON
+print ("JSON of data combined to be stored to db: ")
+print (json.dumps(new_receipt, indent=4))
