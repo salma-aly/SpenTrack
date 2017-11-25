@@ -2,6 +2,7 @@ package com.spentrack.spentrack;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.preference.PreferenceActivity;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -13,6 +14,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.TextView;
+import com.loopj.android.http.*;
+
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -33,10 +36,22 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONObject;
 
+import java.io.BufferedOutputStream;
+import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+
+import cz.msebera.android.httpclient.Header;
+import cz.msebera.android.httpclient.entity.StringEntity;
+import cz.msebera.android.httpclient.message.BasicHeader;
+import cz.msebera.android.httpclient.protocol.HTTP;
 
 
 public class LoginActivity extends AppCompatActivity implements
@@ -149,11 +164,75 @@ public class LoginActivity extends AppCompatActivity implements
         try {
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
             String idToken = account.getIdToken();
-
+            Log.w("here",idToken);
             // TODO(developer): send ID Token to server and validate
             //UNCOMMENT THE FOLLOWING CODE TO SEND HTTP REQUEST TO SERVER FOR THE AUTHENTICATION TOKEN!!!
 
-            HttpClient httpClient = new DefaultHttpClient();
+            String urlString = "http://35.196.180.79:8080/spentrack"; // URL to call
+            JSONObject jsonParams = new JSONObject();
+
+            AsyncHttpClient client = new AsyncHttpClient();
+            try {
+                RequestParams params = new RequestParams();
+                params.put("token",idToken);
+                jsonParams.put("notes", idToken);
+                StringEntity entity = new StringEntity(jsonParams.toString());
+                entity.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
+                client.get(this,"http://35.196.214.140:8080/spentrack",entity,"application/json", new AsyncHttpResponseHandler() {
+                //client.get(urlString,params, new AsyncHttpResponseHandler() {
+                    @Override
+                    public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                        String content = new String(responseBody);
+                        Log.w("here", content);
+
+                    }
+
+                    @Override
+                    public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                        Log.w("here", error);
+
+                    }
+                });
+            }
+            catch (Exception e) {
+
+                System.out.println(e.getMessage());
+
+
+
+            }
+            String data = idToken; //data to post
+
+            OutputStream out = null;
+           /* try {
+
+                URL url = new URL(urlString);
+
+                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+
+                out = new BufferedOutputStream(urlConnection.getOutputStream());
+
+                BufferedWriter writer = new BufferedWriter (new OutputStreamWriter(out, "UTF-8"));
+
+                writer.write(data);
+
+                writer.flush();
+
+                writer.close();
+
+                out.close();
+
+                urlConnection.connect();
+
+
+            } catch (Exception e) {
+
+                System.out.println(e.getMessage());
+
+
+
+            }*/
+           /* HttpClient httpClient = new DefaultHttpClient();
             HttpPost httpPost = new HttpPost("http://35.196.180.79:8080/spentrack");
 //
             try {
@@ -169,14 +248,14 @@ public class LoginActivity extends AppCompatActivity implements
                 Log.e(TAG, "Error sending ID token to backend.", e);
             } catch (IOException e) {
                 Log.e(TAG, "Error sending ID token to backend.", e);
-            }
+            }*/
 
             // Signed in successfully, show authenticated UI.
             updateUI(account);
         } catch (ApiException e) {
             // The ApiException status code indicates the detailed failure reason.
             // Please refer to the GoogleSignInStatusCodes class reference for more information.
-            Log.w(TAG, "signInResult:failed code=" + e.getStatusCode());
+            Log.w(TAG, "signInResult:failed code=" + e.getMessage());
             updateUI(null);
         }
     }
