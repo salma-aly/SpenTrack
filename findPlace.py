@@ -11,7 +11,7 @@ google_places = GooglePlaces(YOUR_API_KEY)
 #GooglePlacesSearchResult is a LIST!
 def getPlace(shop_name, postal_code):
     query_result = google_places.nearby_search(
-            location=postal_code, #need location input #could specify ,QC
+            location="montreal,"+postal_code, #need location input #could specify ,QC
             keyword=shop_name)#'Bonjour Supernarche') #typo in street name still works
     '''
     location: montreal
