@@ -97,5 +97,11 @@ ENV/
 # mkdocs documentation
 /site
 
+#idea
+.idea/
+
+#cloud-vision
+cloud-vision
+
 # mypy
 .mypy_cache/
