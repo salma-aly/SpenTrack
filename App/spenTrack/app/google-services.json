@@ -1,0 +1,52 @@
+{
+  "project_info": {
+    "project_number": "877602530193",
+    "project_id": "spentrack-184421"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:877602530193:android:331ad15230208f7a",
+        "android_client_info": {
+          "package_name": "com.spentrack.spentrack"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "877602530193-4emq3ss2h7omvingocbeih51hmcr95qv.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "877602530193-1c9saojfc40vsriit2ah4fo7kpa093rd.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "877602530193-6st12h6683hl5soqr2t2u0434bq9f765.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.spentrack.spentrack",
+            "certificate_hash": "063eff33b1e1e1d3c551919619b4ed8e4faf9974"
+          }
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCC9nrWItCaPT7obGtUuYOkM4toOU6IyRM"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
