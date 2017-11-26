@@ -3,9 +3,10 @@
     package="com.spentrack.spentrack">
 
     <!--<uses-sdk android:minSdkVersion="4" android:targetSdkVersion="12" />-->
+    <uses-permission-sdk-23 android:name="android.permission.CAMERA" />
     <uses-feature android:name="android.hardware.camera" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-
+    <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
         android:allowBackup="true"
@@ -29,7 +30,15 @@
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".TakePicture" />
-
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="com.spentrack.spentrack.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/paths" />
+        </provider>
     </application>
 
 </manifest>

@@ -1,95 +1,7 @@
-//package com.spentrack.spentrack;
-//
-//        import android.content.Intent;
-//        import android.net.Uri;
-//        import android.os.Bundle;
-//        import android.os.Environment;
-//        import android.provider.MediaStore;
-//        import android.support.design.widget.FloatingActionButton;
-//        import android.support.design.widget.Snackbar;
-//        import android.support.v7.app.AppCompatActivity;
-//        import android.support.v7.widget.Toolbar;
-//        import android.util.Log;
-//        import android.view.View;
-//        import android.widget.Button;
-//
-//        import java.io.File;
-//        import java.io.IOException;
-//
-//public class MainActivity extends AppCompatActivity {
-//
-//    private Button takePictureButton;
-//
-//    int TAKE_PHOTO_CODE = 0;
-//    public static int count = 0;
-//
-//    @Override
-//    protected void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_main);
-//
-////        takePictureButton = (Button) findViewById(R.id.btnCapture);
-////        takePictureButton.setOnClickListener(new View.OnClickListener(){
-////            public void onClick(View v) {
-////                gotoTakePicture();
-////            }
-////        });
-//
-//        // Here, we are making a folder named picFolder to store
-//        // pics taken by the camera using this application.
-//        final String dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/picFolder/";
-//        File newdir = new File(dir);
-//        newdir.mkdirs();
-//
-//        Button capture = (Button) findViewById(R.id.btnCapture);
-//        capture.setOnClickListener(new View.OnClickListener() {
-//            public void onClick(View v) {
-//
-//                // Here, the counter will be incremented each time, and the
-//                // picture taken by camera will be stored as 1.jpg,2.jpg
-//                // and likewise.
-//                count++;
-//                String file = dir+count+".jpg";
-//                File newfile = new File(file);
-//                try {
-//                    newfile.createNewFile();
-//                }
-//                catch (IOException e)
-//                {
-//                }
-//
-//                Uri outputFileUri = Uri.fromFile(newfile);
-//
-//                Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-//                cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
-//
-//                startActivityForResult(cameraIntent, TAKE_PHOTO_CODE);
-//            }
-//        });
-//    }
-//
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//
-//        if (requestCode == TAKE_PHOTO_CODE && resultCode == RESULT_OK) {
-//            Log.d("CameraDemo", "Pic saved");
-//        }
-//    }
-//
-////    /** Called Take Picture*/
-////    public void gotoTakePicture() {
-////        Intent intent = new Intent(this, TakePicture.class);
-////        startActivity(intent);  //starts ProfileActivity
-////    }
-//
-//}
-//
-//
-/////////////////////////////
 package com.spentrack.spentrack;
 
 import android.content.pm.PackageManager;
+import android.support.v4.content.FileProvider;
 import android.widget.Button;
 
         import java.io.File;
@@ -116,8 +28,20 @@ import android.widget.Button;
         import android.widget.ImageView;
         import android.widget.VideoView;
 
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
+
+import cz.msebera.android.httpclient.Header;
+import cz.msebera.android.httpclient.entity.StringEntity;
+import cz.msebera.android.httpclient.message.BasicHeader;
+import cz.msebera.android.httpclient.protocol.HTTP;
+
+import static com.loopj.android.http.AsyncHttpClient.log;
+
 
 public class MainActivity extends Activity {
+
 
     private static final int ACTION_TAKE_PHOTO_B = 1;
     private static final int ACTION_TAKE_PHOTO_S = 2;
@@ -176,8 +100,43 @@ public class MainActivity extends Activity {
         String imageFileName = JPEG_FILE_PREFIX + timeStamp + "_";
         File albumF = getAlbumDir();
         File imageF = File.createTempFile(imageFileName, JPEG_FILE_SUFFIX, albumF);
+        mCurrentPhotoPath = imageF.getAbsolutePath();
+        log.w("path",mCurrentPhotoPath);
         return imageF;
     }
+
+    public void postpicture(){
+        AsyncHttpClient client = new AsyncHttpClient();
+        try {
+            RequestParams params = new RequestParams();
+            File myFile = new File(mCurrentPhotoPath);
+            params.put("media",myFile);
+            client.post("http://35.196.214.140:8080/spentrack",params, new AsyncHttpResponseHandler() {
+                //client.get(urlString,params, new AsyncHttpResponseHandler() {
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                    String content = new String(responseBody);
+                    Log.w("here", content);
+
+                }
+
+                @Override
+                public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                    Log.w("here", error);
+
+                }
+            });
+        }
+        catch (Exception e) {
+
+            System.out.println(e.getMessage());
+
+
+
+        }
+    }
+
+
 
     private File setUpPhotoFile() throws IOException {
 
@@ -222,6 +181,7 @@ public class MainActivity extends Activity {
         mVideoUri = null;
         mImageView.setVisibility(View.VISIBLE);
         mVideoView.setVisibility(View.INVISIBLE);
+        postpicture();
     }
 
     private void galleryAddPic() {
@@ -232,7 +192,33 @@ public class MainActivity extends Activity {
         this.sendBroadcast(mediaScanIntent);
     }
 
-    private void dispatchTakePictureIntent(int actionCode) {
+    static final int REQUEST_TAKE_PHOTO = 1;
+
+    private void dispatchTakePictureIntent() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        // Ensure that there's a camera activity to handle the intent
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            // Create the File where the photo should go
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException ex) {
+                // Error occurred while creating the File
+                log.w("tag","file creation failed");
+            }
+            /* Continue only if the File was successfully created */
+            if (photoFile != null) {
+                Uri photoURI = FileProvider.getUriForFile(this,
+                        "com.spentrack.spentrack.fileprovider",
+                        photoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
+                //postpicture();
+            }
+        }
+    }
+
+   /* private void dispatchTakePictureIntent(int actionCode) {
 
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
@@ -256,7 +242,7 @@ public class MainActivity extends Activity {
         } // switch
 
         startActivityForResult(takePictureIntent, actionCode);
-    }
+    }*/
 
     private void dispatchTakeVideoIntent() {
         Intent takeVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
@@ -294,7 +280,7 @@ public class MainActivity extends Activity {
             new Button.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    dispatchTakePictureIntent(ACTION_TAKE_PHOTO_B);
+                    dispatchTakePictureIntent();
                 }
             };
 
@@ -302,7 +288,7 @@ public class MainActivity extends Activity {
             new Button.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    dispatchTakePictureIntent(ACTION_TAKE_PHOTO_S);
+                    dispatchTakePictureIntent();
                 }
             };
 
