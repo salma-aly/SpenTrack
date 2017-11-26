@@ -126,7 +126,7 @@ def detect_text(path):
 
 #process receipt using google vision api to obtain a DICT containing: total, shop_name, date, postal_code
 new_receipt= detect_text(image_path)
-print ("Dictionary from Receipt - vision api: ")
+print ("Dict from Receipt - vision api: ")
 print (new_receipt)
 print ("\n")
 #total, shop_name, date, postal_code
