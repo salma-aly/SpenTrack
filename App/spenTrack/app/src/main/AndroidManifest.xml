@@ -2,14 +2,17 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.spentrack.spentrack">
 
+
     <!-- <uses-sdk android:minSdkVersion="4" android:targetSdkVersion="12" /> -->
+
+    <!--<uses-sdk android:minSdkVersion="4" android:targetSdkVersion="12" />-->
+    <uses-permission-sdk-23 android:name="android.permission.CAMERA" />
+
     <uses-feature android:name="android.hardware.camera" />
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
-    <uses-permission android:name="android.permission.INTERNET" />
-
-
+    <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
         android:allowBackup="true"
@@ -33,6 +36,7 @@
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".TakePicture" />
+<<<<<<< HEAD
         <activity
             android:name=".ShowSpendingActivity"
             android:label="@string/title_activity_show_spending"
@@ -42,6 +46,17 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.spentrack.spentrack.LoginActivity" />
         </activity>
+=======
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="com.spentrack.spentrack.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/paths" />
+        </provider>
+>>>>>>> ce8c84b3f785324246827447b173e4ba3c6b47c8
     </application>
 
 </manifest>
