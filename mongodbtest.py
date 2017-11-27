@@ -11,6 +11,7 @@ from werkzeug.utils import secure_filename
 import os
 from google.oauth2 import id_token
 from google.auth.transport import requests
+from receiptInfo import main
 
 dbclient = pymongo.MongoClient('35.196.76.140',27017,connect=False)
 application = Flask(__name__)
@@ -45,34 +46,26 @@ def validate_token(token):
 
 class SpenTrack(Resource):
     def get(self):
-        if request.headers["Authorization"]:
-            id = validate_token(request.headers["Authorization"])
-
+        r = request.get_json()
+        if r['notes']:
+            id = validate_token(r['notes'])
             return(id)
         else:
             return "Unauthorized"
-
+        
     def post(self):
-        print("supp")
         file = request.files['media']
         if file:
             filename = secure_filename(file.filename)
             file.save(os.path.join(application.config['UPLOAD_FOLDER'], filename))
         client = vision.ImageAnnotatorClient()
         print(filename)
-        with io.open('uploads/' + filename, 'rb') as image_file:
-            content = image_file.read()
-
-        image = types.Image(content=content)
-
-        response = client.text_detection(image=image)
-        texts = response.text_annotations
-        print(texts)
-        db = dbclient['test']
-        collection = db['test_collection']
-        v = { str(x['_id']):x for x in collection.find()}
-        print (v)
-        return {'value': texts}
+        result =  main('uploads/' + filename)
+        #db = dbclient['test']
+        #collection = db['test_collection']
+        #v = { str(x['_id']):x for x in collection.find()}
+        #print (v)
+        return result
 
 api.add_resource(SpenTrack, '/spentrack') # Route_1
 

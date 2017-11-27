@@ -1,9 +1,10 @@
 from googleplaces import GooglePlaces , types, json#, lang
 import json
-
+import os
 # YOUR_API_KEY = 'INSERT KEY HERE'
-
-google_places = GooglePlaces(YOUR_API_KEY)
+print (os.environ)
+KEY= os.environ['KEY']
+google_places = GooglePlaces(KEY)
 
 # You may prefer to use the text_search API, instead.
 
