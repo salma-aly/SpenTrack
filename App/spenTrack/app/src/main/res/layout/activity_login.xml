@@ -29,8 +29,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
-            android:text="@string/title_text"
             android:gravity="center"
+            android:text="@string/title_text"
             android:textColor="@android:color/holo_blue_bright"
             android:textSize="45sp" />
 
@@ -39,8 +39,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
-            android:text="@string/sub_title_text"
             android:gravity="center"
+            android:text="@string/sub_title_text"
             android:textColor="@android:color/white"
             android:textSize="20sp" />
 
@@ -57,6 +57,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="cam only" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Button" />
 
         <TextView
             android:id="@+id/detail"
@@ -79,6 +84,12 @@
             tools:text="Optional Action"
             tools:visibility="visible" />
 
+        <Button
+            android:id="@+id/querybtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Query db" />
+
     </LinearLayout>
 
 
@@ -94,7 +105,9 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:visibility="visible"
-            tools:visibility="gone" />
+            tools:visibility="gone" >
+
+        </com.google.android.gms.common.SignInButton>
 
         <LinearLayout
             android:id="@+id/sign_out_and_disconnect"

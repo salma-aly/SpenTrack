@@ -40,6 +40,7 @@ import org.json.JSONObject;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -65,6 +66,7 @@ public class LoginActivity extends AppCompatActivity implements
 
     private Button mainPageButton;
     private Button TakePicturePageButton;
+    private Button QueryButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,6 +80,7 @@ public class LoginActivity extends AppCompatActivity implements
         findViewById(R.id.sign_in_button).setOnClickListener(this);
         findViewById(R.id.sign_out_button).setOnClickListener(this);
         findViewById(R.id.disconnect_button).setOnClickListener(this);
+        findViewById(R.id.querybtn).setOnClickListener(this);
 
         // [START configure_signin]
         // Configure sign-in to request the user's ID, email address, and basic
@@ -118,6 +121,13 @@ public class LoginActivity extends AppCompatActivity implements
             }
         });
 
+        QueryButton  = (Button) findViewById(R.id.querybtn);
+        QueryButton.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v) {
+                goToQuery();
+            }
+        });
+
     }
 
     public void gotoMainActivity() {
@@ -128,6 +138,15 @@ public class LoginActivity extends AppCompatActivity implements
     public void gotoTakePicture() {
         Intent intent = new Intent(this, TakePicture.class);
         startActivity(intent);  //starts MainActivity
+    }
+
+    private void goToQuery(){
+
+
+        Intent myIntent = new Intent(LoginActivity.this,
+                ShowSpending.class);
+        startActivity(myIntent);
+
     }
 
     @Override
@@ -180,14 +199,14 @@ public class LoginActivity extends AppCompatActivity implements
                 entity.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
                 client.get(this,"http://35.196.214.140:8080/spentrack",entity,"application/json", new AsyncHttpResponseHandler() {
                 //client.get(urlString,params, new AsyncHttpResponseHandler() {
-                    @Override
+
                     public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                         String content = new String(responseBody);
                         Log.w("here", content);
 
                     }
 
-                    @Override
+
                     public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
                         Log.w("here", error);
 
