@@ -54,6 +54,12 @@ class SpenTrack(Resource):
             return "Unauthorized"
         
     def post(self):
+        id = ""
+        if r['notes']:
+            id = validate_token(r['notes'])
+        else:
+            return "Unauthorized"
+        id = validate_token(
         file = request.files['media']
         if file:
             filename = secure_filename(file.filename)
@@ -61,10 +67,7 @@ class SpenTrack(Resource):
         client = vision.ImageAnnotatorClient()
         print(filename)
         result =  main('uploads/' + filename)
-        #db = dbclient['test']
-        #collection = db['test_collection']
-        #v = { str(x['_id']):x for x in collection.find()}
-        #print (v)
+        insert_spending_record(id,result) 
         return result
 
 api.add_resource(SpenTrack, '/spentrack') # Route_1
