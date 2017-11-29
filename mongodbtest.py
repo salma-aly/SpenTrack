@@ -12,6 +12,7 @@ import os
 from google.oauth2 import id_token
 from google.auth.transport import requests
 from receiptInfo import main
+from getSpending import find_by_shop_name , get_multifield_spending
 
 dbclient = pymongo.MongoClient('35.196.76.140',27017,connect=False)
 application = Flask(__name__)
@@ -44,14 +45,33 @@ def validate_token(token):
         return "Invalid token"
 
 
-class SpenTrack(Resource):
+class SpenTrack(Resource):    
     def get(self):
         r = request.get_json()
         if r['notes']:
             id = validate_token(r['notes'])
             return(id)
+        #if r['request_type']=='spending_query':
+            #result=get_multifield_spending(userid,r)
+            #return result
+        if r['shop_name']:
+            print(r['shop_name'])
+            return getSpending.find_by_shop_name(r['id'],r[shop_name])
+
+            #call the find_by_shop_name_function
+        elif r['date_from'] and r['date_to']:
+
+            print(r['date_from'] ,r['date_to'])
+            return getSpending.find_by_shop_name(r['id'],r['date_from'] ,r['date_to'])
+            #call find_by_date
+            # elif r['category']:
+            #     # call find by category
+            # else:
+            #     # find all spending
+
         else:
             return "Unauthorized"
+
         
     def post(self):
         file = request.files['media']
@@ -70,4 +90,4 @@ class SpenTrack(Resource):
 api.add_resource(SpenTrack, '/spentrack') # Route_1
 
 if __name__ == '__main__':
-    application.run(host='0.0.0.0')
+    application.run()

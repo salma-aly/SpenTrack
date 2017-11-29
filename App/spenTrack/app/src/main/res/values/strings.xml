@@ -66,4 +66,22 @@
     <string name="album_name">CameraSample</string>
     <string name="title_activity_main2">Main2Activity</string>
     <string name="title_activity_show_spending">ShowSpending</string>
+
+
+    <string name="category_prompt">Choose a country</string>
+
+    <string-array name="shopping_categories">
+        <item>Restaurant</item>
+        <item>Cafe</item>
+        <item>Clothing Store</item>
+        <item>Furniture Store</item>
+        <item>Hair Care</item>
+        <item>Grocery or Supermarket</item>
+        <item>Electronics Store</item>
+        <item>Museum</item>
+        <item>Pharmacy</item>
+        <item>Store</item>
+    </string-array>
+
 </resources>
+

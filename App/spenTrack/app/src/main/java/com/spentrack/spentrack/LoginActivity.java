@@ -1,6 +1,7 @@
 package com.spentrack.spentrack;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
 import android.support.annotation.NonNull;
@@ -67,6 +68,9 @@ public class LoginActivity extends AppCompatActivity implements
     private Button mainPageButton;
     private Button TakePicturePageButton;
     private Button QueryButton;
+    SharedPreferences settings;
+
+    public static final String USER_ID = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,6 +132,8 @@ public class LoginActivity extends AppCompatActivity implements
             }
         });
 
+        settings = getSharedPreferences(USER_ID,0);
+
     }
 
     public void gotoMainActivity() {
@@ -158,6 +164,8 @@ public class LoginActivity extends AppCompatActivity implements
         // the GoogleSignInAccount will be non-null.
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
         updateUI(account);
+
+
         // [END on_start_sign_in]
     }
 
@@ -187,7 +195,7 @@ public class LoginActivity extends AppCompatActivity implements
             // TODO(developer): send ID Token to server and validate
             //UNCOMMENT THE FOLLOWING CODE TO SEND HTTP REQUEST TO SERVER FOR THE AUTHENTICATION TOKEN!!!
 
-            String urlString = "http://35.196.180.79:8080/spentrack"; // URL to call
+            String urlString = "http://104.196.62.234:8080/spentrack"; // URL to call
             JSONObject jsonParams = new JSONObject();
 
             AsyncHttpClient client = new AsyncHttpClient();
@@ -195,15 +203,21 @@ public class LoginActivity extends AppCompatActivity implements
                 RequestParams params = new RequestParams();
                 params.put("token",idToken);
                 jsonParams.put("notes", idToken);
+
                 StringEntity entity = new StringEntity(jsonParams.toString());
                 entity.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
-                client.get(this,"http://35.196.214.140:8080/spentrack",entity,"application/json", new AsyncHttpResponseHandler() {
+                client.get(this,"http://104.196.62.234:8080/spentrack",entity,"application/json", new AsyncHttpResponseHandler() {
                 //client.get(urlString,params, new AsyncHttpResponseHandler() {
 
                     public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                         String content = new String(responseBody);
                         Log.w("here", content);
 
+                        //save id
+                        SharedPreferences.Editor editor = getSharedPreferences(USER_ID, MODE_PRIVATE).edit();
+                        editor.putString("id",content);
+                        editor.apply();
+                        Log.w("shared prefs is :", getSharedPreferences(USER_ID, MODE_PRIVATE).getString("id","NONE"));
                     }
 
 

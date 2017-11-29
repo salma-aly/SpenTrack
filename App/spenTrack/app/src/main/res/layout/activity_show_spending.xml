@@ -16,19 +16,24 @@
 
             <TableRow
                 android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/Date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Date"
+                    android:textStyle="bold" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
                 android:layout_height="match_parent" >
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="horizontal">
-
-                    <CheckBox
-                        android:id="@+id/datebox"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Date" />
 
                     <TextView
                         android:id="@+id/textView2"
@@ -39,7 +44,7 @@
 
                     <EditText
                         android:id="@+id/date_from_edit_text"
-                        android:layout_width="wrap_content"
+                        android:layout_width="182dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:ems="10"
@@ -65,29 +70,14 @@
 
             <TableRow
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" >
+                android:layout_height="match_parent">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal">
+                <CheckBox
+                    android:id="@+id/shopname_check"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Shop Name" />
 
-                    <CheckBox
-                        android:id="@+id/shopbox"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Shop Name" />
-
-                    <EditText
-                        android:id="@+id/shop_edit_text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:ems="10"
-                        android:inputType="textMultiLine" />
-
-                </LinearLayout>
             </TableRow>
 
             <TableRow
@@ -99,20 +89,44 @@
                     android:layout_height="match_parent"
                     android:orientation="horizontal">
 
-                    <CheckBox
-                        android:id="@+id/addressbox"
-                        android:layout_width="wrap_content"
+                    <Spinner
+                        android:id="@+id/spinner1"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Address" />
+                        android:entries="@array/shopping_categories"
+                        android:prompt="@string/category_prompt"
+                        android:visibility="invisible" />
 
-                    <EditText
-                        android:id="@+id/address_edit_text"
-                        android:layout_width="wrap_content"
+                </LinearLayout>
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <CheckBox
+                    android:id="@+id/category_check"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Shoppping Category" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" >
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <Spinner
+                        android:id="@+id/spinner2"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:ems="10"
-                        android:inputType="textPostalAddress" />
+                        android:visibility="invisible" />
 
                 </LinearLayout>
             </TableRow>
@@ -142,8 +156,7 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal">
+                    android:layout_height="match_parent">
 
                     <TextView
                         android:id="@+id/result_text_view"

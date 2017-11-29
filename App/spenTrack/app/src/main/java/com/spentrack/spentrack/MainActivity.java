@@ -111,7 +111,7 @@ public class MainActivity extends Activity {
             RequestParams params = new RequestParams();
             File myFile = new File(mCurrentPhotoPath);
             params.put("media",myFile);
-            client.post("http://35.196.214.140:8080/spentrack",params, new AsyncHttpResponseHandler() {
+            client.post("http://104.196.62.234:8080/spentrack",params, new AsyncHttpResponseHandler() {
                 //client.get(urlString,params, new AsyncHttpResponseHandler() {
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
