@@ -157,9 +157,9 @@ def main(path):
         new_receipt.update(placesInfoDict) #appends the places data to the remaining receipt dict data
         receipt_and_place_data_JSON = json.dumps(new_receipt) #Transform final dict with data to store to db to JSON
         print ("JSON of data combined to be stored to db: ")
-        return (json.dumps(new_receipt, indent=4, ensure_ascii=False))
+        return (json.dumps(new_receipt,ensure_ascii=False))
     else:
         new_receipt.pop('Postal Code', None)
         receipt_and_place_data_JSON = json.dumps(new_receipt)  # Transform final dict with data to store to db to JSON
         print ("JSON of data combined to be stored to db: ")
-        return (json.dumps(new_receipt, indent=4, ensure_ascii=False))
+        return (json.dumps(new_receipt,ensure_ascii=False))

@@ -25,7 +25,7 @@ dbclient = pymongo.MongoClient('35.196.76.140',27017,connect=False)
 # you can also use a local MongoDB instance
  
 # connect to the students database and the ctec121 collection
-db = connection.spentrack.collectionname
+#db = connection.spentrack.collectionname
  
 # # close the connection to MongoDB
 # connection.close()
@@ -36,27 +36,47 @@ db = connection.spentrack.collectionname
 
 #query by date (take userid)
 def find_by_date(userid, date):
-	for post in db.find({'user':userid, 'date':date}):
-		pprint.pprint(post)
+    for post in db.find({'user':userid, 'date':date}):
+        pprint.pprint(post)
 
 #query by shop name
 def find_by_shopName(userid, shopname):
-	for post in db.find({'user':userid, 'shop':shopname}):
-		pprint.pprint(post)
+    for post in db.find({'user':userid, 'shop':shopname}):
+        pprint.pprint(post)
 
 #query by area ?
-
+#def get_multifield_spending(userid, params):
+#    values=[]
+#    if(params["date_to"]and params["date_from"]and params["shopname"]):
+    # db.collection.find( { field: { $gt: value1, $lt: value2 } } );
+    # db.collection.find({"foo":{"$ne":"bar", "$exists":true}})
+#        for post in db.find({"date": {"$lt": params["date_to"], "$gt":params["date_from"]}, "shop":params["shopname"]})
+#            values.append(post)
+#            pprint.pprint(post)
+#    elif (params["date_to"]and params["date_from"]):
+#        for post in db.find({"date": {"$lt": params["date_to"], "$gt":params["date_from"]}})
+#            values.append(post)
+#            pprint.pprint(post)
+#    elif(params["shopname"]):
+#        for post in db.find({'user':userid, 'shop':shopname}):
+#            values.append(post)
+#            pprint.pprint(post)
+#    else:
+#        for post in db.find({'user':userid}):
+#            values.append(post)
+#            pprint.pprint(post)
+#    return values
 def get_all_spending(userid):
-	for post in db.find({'user':userid}):
-		pprint.pprint(post)
+    for post in db.find({'user':userid}):
+	    pprint.pprint(post)
 
-def insert_sepnding_record(userid,record):
-	db = dbclient["spentrack"]
-        collection = db.collection[userid]
-        db.insert(record)
+def insert_spending_record(userid,record):
+    db = dbclient["spentrack"]
+    collection = db[userid]
+    collection.insert(record)
 
 def close_db():
-	# close the connection to MongoDB
-	connection.close()
+    # close the connection to MongoDB
+    connection.close()
 
 #close db
