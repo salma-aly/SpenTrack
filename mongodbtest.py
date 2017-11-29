@@ -12,7 +12,7 @@ import os
 from google.oauth2 import id_token
 from google.auth.transport import requests
 from receiptInfo import main
-import getSpending
+from getSpending import find_by_shop_name
 
 dbclient = pymongo.MongoClient('35.196.76.140',27017,connect=False)
 application = Flask(__name__)
@@ -45,41 +45,38 @@ def validate_token(token):
         return "Invalid token"
 
 
-class SpenTrack(Resource):
+class SpenTrack(Resource):    
     def get(self):
         r = request.get_json()
-
-        if 'notes' in r  and  r['notes']:
+        if r['notes']:
             id = validate_token(r['notes'])
             return(id)
-        #if r['request_type']=='spending_query':
-        #result=get_multifield_spending(userid,r)
-        #return result
-        else:
-            return "Unauthorized"
-        if r['shop_name']:
-             print(r['shop_name'])
-             return getSpending.find_by_shop_name(r['id'],r[shop_name])
-             
-             #call the find_by_shop_name_function
-        elif r['date_from'] and r['date_to']:
-             print(r['date_from'] ,r['date_to'])
-             return getSpending.find_by_shop_name(r['id'],r['date_from'] ,r['date_to'])
-             #call find_by_date
-             # elif r['category']:
-             #     # call find by category
-             # else:
-             #     # find all spending
+        if r['request_type']=='spending_query':
+            #result=get_multifield_spending(userid,r)
+            #return result
+            if r['shop_name']:
+                print(r['shop_name'])
+                return getSpending.find_by_shop_name(r['id'],r[shop_name])
+
+            if r['category_name']:
+                print(r['category_name'])
+                return getSpending.find_by_shop_name(r['id'],r[shop_name])
+
+                #call the find_by_shop_name_function
+            elif r['date_from'] and r['date_to']:
+                print(r['date_from'] ,r['date_to'])
+                return getSpending.find_by_shop_name(r['id'],r['date_from'] ,r['date_to'])
+                #call find_by_date
+                # elif r['category']:
+                #     # call find by category
+                # else:
+                #     # find all spending
+
         else:
             return "Unauthorized"
 
+        
     def post(self):
-        id = "121232334234534523543453452324545432234"
-        #r = request.get_data()
-        #if r['notes']:
-        #    id = validate_token(r['notes'])
-        #else:
-        #    return "Unauthorized"
         file = request.files['media']
         if file:
             filename = secure_filename(file.filename)
@@ -87,10 +84,13 @@ class SpenTrack(Resource):
         client = vision.ImageAnnotatorClient()
         print(filename)
         result =  main('uploads/' + filename)
-        getSpending.insert_spending_record(id,loads(result)) 
+        #db = dbclient['test']
+        #collection = db['test_collection']
+        #v = { str(x['_id']):x for x in collection.find()}
+        #print (v)
         return result
 
 api.add_resource(SpenTrack, '/spentrack') # Route_1
 
 if __name__ == '__main__':
-    application.run(host='0.0.0.0')
+    application.run()
