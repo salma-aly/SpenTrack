@@ -181,7 +181,7 @@ public class MainActivity extends Activity {
                                 "Telephone number: " + extractedPhoneNumber+ "\n" +
                                 "Website: " + extractedWebsite+ "\n" +
                                 "Rating: " + extractedRating+ "\n");
-                        testPicReturnGoogleURL.setText(extractedURLtoGoogleMaps);
+                        testPicReturnGoogleURL.setText("See shop location on google maps: \n" + extractedURLtoGoogleMaps);
 
                     } catch (JSONException e) {
                         e.printStackTrace();
