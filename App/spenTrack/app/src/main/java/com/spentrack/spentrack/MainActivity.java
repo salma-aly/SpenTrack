@@ -1,5 +1,6 @@
 package com.spentrack.spentrack;
 
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.support.v4.content.FileProvider;
 import android.text.Html;
@@ -50,7 +51,7 @@ import cz.msebera.android.httpclient.message.BasicHeader;
 import cz.msebera.android.httpclient.protocol.HTTP;
 
 import static com.loopj.android.http.AsyncHttpClient.log;
-
+import static com.spentrack.spentrack.LoginActivity.USER_ID;
 
 
 public class MainActivity extends Activity {
@@ -80,6 +81,9 @@ public class MainActivity extends Activity {
     public TextView testPicReturn;
     public TextView testPicReturnGoogleURL;
     public TextView linkShopWebsite;
+
+    SharedPreferences prefs = this.getSharedPreferences(
+            "myprefs", Context.MODE_PRIVATE);
 
     /* Photo album for this application */
     private String getAlbumName() {
@@ -191,6 +195,7 @@ public class MainActivity extends Activity {
                                 "Rating: " + extractedRating+ "\n");
                         linkShopWebsite.setText("See shop's website: \n" + extractedWebsite+ "\n");
                         testPicReturnGoogleURL.setText("See shop's location on google maps: \n" + extractedURLtoGoogleMaps);
+                        addShopName(extractedShopName);
 
 
 //                         extractedTotal = "";
@@ -538,6 +543,16 @@ public class MainActivity extends Activity {
                     getText(R.string.cannot).toString() + " " + btn.getText());
             btn.setClickable(false);
         }
+    }
+
+    private void addShopName(String name){
+        SharedPreferences.Editor editor = prefs.edit();
+        String currShopNames=prefs.getString("shopnames","");
+        String newShopNames=currShopNames+","+name;
+        editor.putString("shopnames",newShopNames);
+        editor.apply();
+
+
     }
 
 }

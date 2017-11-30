@@ -70,7 +70,7 @@ public class LoginActivity extends AppCompatActivity implements
     private Button QueryButton;
     SharedPreferences settings;
 
-    public static final String USER_ID = "";
+    public static final String USER_ID = "myprefs";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

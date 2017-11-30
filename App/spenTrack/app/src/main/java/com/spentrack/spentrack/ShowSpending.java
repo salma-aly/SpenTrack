@@ -25,6 +25,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -88,7 +89,8 @@ public class ShowSpending extends AppCompatActivity {
         spinner1 = (Spinner) findViewById(R.id.spinner1);
         spinner2=(Spinner)findViewById(R.id.spinner2);
         addListenerOnSpinnerItemSelection();
-
+        addItemsOnSpinner2();
+        //add on click listner for spinner 2 if it works 
         responseText=(TextView)findViewById(R.id.data_text_view);
 
         dateFromText=(EditText)findViewById(R.id.date_from_edit_text);
@@ -168,15 +170,24 @@ public class ShowSpending extends AppCompatActivity {
 
     public void addItemsOnSpinner2() {
 
-        SharedPreferences ShopPrefs = getSharedPreferences("shopNamesList", MODE_PRIVATE);
-        Set<String> set = ShopPrefs.getStringSet("key", null);
-        if(set !=null){
-            List<String> list = new ArrayList<String>(set);
-            ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
+//        SharedPreferences ShopPrefs = getSharedPreferences("shopNamesList", MODE_PRIVATE);
+//        Set<String> set = ShopPrefs.getStringSet("key", null);
+//        if(set !=null){
+//            List<String> list = new ArrayList<String>(set);
+//            ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
+//                    android.R.layout.simple_spinner_item, list);
+//            dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//            spinner2.setAdapter(dataAdapter);
+//        }
+
+        SharedPreferences prefs= getSharedPreferences(USER_ID, MODE_PRIVATE);
+        String shopnames=prefs.getString("shopnames","");
+        ArrayList<String> list= new ArrayList<>(Arrays.asList(shopnames.split(",")));
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
                     android.R.layout.simple_spinner_item, list);
             dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             spinner2.setAdapter(dataAdapter);
-        }
+
     }
 
 
