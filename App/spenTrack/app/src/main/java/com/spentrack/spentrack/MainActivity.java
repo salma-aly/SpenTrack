@@ -79,6 +79,7 @@ public class MainActivity extends Activity {
 
     public TextView testPicReturn;
     public TextView testPicReturnGoogleURL;
+    public TextView linkShopWebsite;
 
     /* Photo album for this application */
     private String getAlbumName() {
@@ -123,44 +124,25 @@ public class MainActivity extends Activity {
     public void postpicture(){
         AsyncHttpClient client = new AsyncHttpClient();
         try {
+            testPicReturn.setText("Retrieving data from receipt...");
+            linkShopWebsite.setText("");
+            testPicReturnGoogleURL.setText("");
             RequestParams params = new RequestParams();
             File myFile = new File(mCurrentPhotoPath);
             params.put("media",myFile);
             client.post("http://104.196.62.234:8080/spentrack",params, new AsyncHttpResponseHandler() {
                 //client.get(urlString,params, new AsyncHttpResponseHandler() {
+
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                     String content = new String(responseBody);
-
-                    log.w("REAL JSON1", content);
-                    try {
-                        JSONObject content_inJSON_TEST = new JSONObject(content);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-
+                    log.w("Response Body as String",content);
 
                     String content_notwrapped_by_quotes = content.replaceAll("^\"|\"$", "");
-                    log.w("REAL JSON2", content_notwrapped_by_quotes);
-
                     content = content_notwrapped_by_quotes.replaceAll("\\\\\"", "\"");
-
-//                     content = content.replace("\\","");
-
-
-                    String testJSON = "{\"Website\": \"https://www.montrealkoreanfood.com/\", \"Shop Name\": \"\\u00c9picerie Cor\\u00e9enne et Japonaise (\\ud55c\\uad6d\\uc2dd\\ud488)\", \"Total\": 7.98, \"Category\": \"grocery_or_supermarket\", \"Telephone number\": \"(514) 779-7456\", \"Date\": \"2017/11/01\", \"See place on google maps\": \"https://maps.google.com/?cid=5463033794973654626\", \"Address\": \"1829 Rue Sainte-Catherine O, Montr\\u00e9al, QC H3H 1M6, Canada\", \"Rating\": \"4.4\"}";
-//                    System.out.println("CONTENT_TEST:" + testJSON);
-
-
-//                    try {
-//                        String removedbackslashes_content = content.replace("\\","");
-
-//                        String jsonFormattedString = removedDoubleQuotesSurrounding_content.replaceAll("\\\\", "");
-//                        System.out.println("CONTENT_REAL: " + jsonFormattedString);
 
                     JSONObject content_inJSON= null;
                     try {
-                        log.w("REAL JSON3", content);
                         content_inJSON = new JSONObject(content);
                         String extractedTotal =content_inJSON.getString( "Total");
                         String extractedDate =content_inJSON.getString( "Date");
@@ -172,16 +154,54 @@ public class MainActivity extends Activity {
                         String extractedURLtoGoogleMaps =content_inJSON.getString( "See place on google maps");
                         String extractedRating=content_inJSON.getString( "Rating");
 
+                        //map categories names given from the server to a user friendly syntax to be displayed on the android app
+                        String catgegory;
+                        switch (extractedCategory) {
+                            case "restaurant":  catgegory = "Restaurant";
+                                break;
+                            case "cafe":  catgegory = "Cafe";
+                                break;
+                            case "clothing_store":  catgegory = "Clothing Store";
+                                break;
+                            case "furniture_store":  catgegory = "Furniture Store";
+                                break;
+                            case "hair_care":  catgegory= "Hair Care";
+                                break;
+                            case "grocery_or_supermarket":  catgegory = "Grocery";
+                                break;
+                            case "electronics_store":  catgegory = "Electronics Store";
+                                break;
+                            case "museum":  catgegory = "Museum";
+                                break;
+                            case "pharmacy":  catgegory = "Pharmacy";
+                                break;
+                            case "store":  catgegory = "Store";
+                                break;
+                            default: catgegory = "Other";
+                                break;
+                        }
+
                         testPicReturn.setText("Data retrieved from receipt: \n\n" +
                                 "Total: " + extractedTotal +"$\n" +
                                 "Date: " + extractedDate + "\n" +
                                 "Shop Name: " + extractedShopName+ "\n" +
-                                "Address: " + extractedShopName+ "\n" +
-                                "Category: " + extractedCategory+ "\n" +
+                                "Address: " + extractedAddress+ "\n" +
+                                "Category: " + catgegory+ "\n" +
                                 "Telephone number: " + extractedPhoneNumber+ "\n" +
-                                "Website: " + extractedWebsite+ "\n" +
                                 "Rating: " + extractedRating+ "\n");
-                        testPicReturnGoogleURL.setText("See shop location on google maps: \n" + extractedURLtoGoogleMaps);
+                        linkShopWebsite.setText("See shop's website: \n" + extractedWebsite+ "\n");
+                        testPicReturnGoogleURL.setText("See shop's location on google maps: \n" + extractedURLtoGoogleMaps);
+
+
+//                         extractedTotal = "";
+//                         extractedDate ="";
+//                         extractedShopName ="";
+//                        extractedAddress ="";
+//                         extractedCategory=content_inJSON.getString( "Category");
+//                         extractedPhoneNumber =content_inJSON.getString( "Telephone number");
+//                         extractedWebsite =content_inJSON.getString( "Website");
+//                         extractedURLtoGoogleMaps =content_inJSON.getString( "See place on google maps");
+//                         extractedRating=content_inJSON.getString( "Rating");
 
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -383,22 +403,24 @@ public class MainActivity extends Activity {
 
         testPicReturn = (TextView) findViewById(R.id.testPicReturn);
         testPicReturnGoogleURL = (TextView) findViewById(R.id.testPicReturnGoogleURL);
-
-        String testJSON = "{\"Website\": \"https://www.montrealkoreanfood.com/\", \"Shop Name\": \"\\u00c9picerie Cor\\u00e9enne et Japonaise (\\ud55c\\uad6d\\uc2dd\\ud488)\", \"Total\": 7.98, \"Category\": \"grocery_or_supermarket\", \"Telephone number\": \"(514) 779-7456\", \"Date\": \"2017/11/01\", \"See place on google maps\": \"https://maps.google.com/?cid=5463033794973654626\", \"Address\": \"1829 Rue Sainte-Catherine O, Montr\\u00e9al, QC H3H 1M6, Canada\", \"Rating\": \"4.4\"}";
-        System.out.print("TEST_JSON" + testJSON);
-        log.w("TEST_JSON", testJSON);
-
-        try {
-            JSONObject obj = new JSONObject(testJSON);
-            String shopname = obj.getString("Shop Name");
-            String linkOnGoogleMaps = obj.getString("See place on google maps");
+        linkShopWebsite = (TextView) findViewById(R.id.linkShopWebsite);
 
 
-            testPicReturnGoogleURL.setText(linkOnGoogleMaps);
+//        String testJSON = "{\"Website\": \"https://www.montrealkoreanfood.com/\", \"Shop Name\": \"\\u00c9picerie Cor\\u00e9enne et Japonaise (\\ud55c\\uad6d\\uc2dd\\ud488)\", \"Total\": 7.98, \"Category\": \"grocery_or_supermarket\", \"Telephone number\": \"(514) 779-7456\", \"Date\": \"2017/11/01\", \"See place on google maps\": \"https://maps.google.com/?cid=5463033794973654626\", \"Address\": \"1829 Rue Sainte-Catherine O, Montr\\u00e9al, QC H3H 1M6, Canada\", \"Rating\": \"4.4\"}";
+//        System.out.print("TEST_JSON" + testJSON);
+//        log.w("TEST_JSON", testJSON);
 
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            JSONObject obj = new JSONObject(testJSON);
+//            String shopname = obj.getString("Shop Name");
+//            String linkOnGoogleMaps = obj.getString("See place on google maps");
+
+
+//            testPicReturnGoogleURL.setText(linkOnGoogleMaps);
+
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
 
 
         Button picBtn = (Button) findViewById(R.id.btnIntend);
