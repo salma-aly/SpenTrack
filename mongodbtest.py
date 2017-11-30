@@ -14,6 +14,7 @@ from google.auth.transport import requests
 from receiptInfo import main
 #from getSpending import find_by_shop_name, insert_spending_record
 import getSpending
+import datetime
 
 dbclient = pymongo.MongoClient('35.196.76.140',27017,connect=False)
 application = Flask(__name__)
@@ -45,6 +46,17 @@ def validate_token(token):
     except ValueError:
         return "Invalid token"
 
+def get_date_object(date_string):
+    #11\/28\/17
+    datearray=date_string.split("/")
+    day=int(datearray[1])
+    month=int(datearray[0])
+    year=int('20'+datearray[2])
+    return datetime.datetime(year,month,day,0,0)
+
+def date_handler(x):
+    if isinstance(x,datetime.datetime):
+        return x.strftime("%Y/%m/%d")
 
 class SpenTrack(Resource):    
     def get(self):
@@ -57,16 +69,20 @@ class SpenTrack(Resource):
             #return result
             if 'shop_name' in r:
                 print(r['shop_name'])
-                return getSpending.find_by_shop_name(r['id'],r[shop_name])
+                return getSpending.find_by_shop_name(r['id'],r['shop_name'])
 
             if 'category_name' in r:
                 print(r['category_name'])
-                return getSpending.find_by_shop_name(r['id'],r[shop_name])
+                return getSpending.find_by_category_name(r['id'],r['category_name'])
 
                 #call the find_by_shop_name_function
             elif 'date_from' in r  and 'date_to' in r and 'id' in r:
                 print(r['date_from'] ,r['date_to'])
-                return getSpending.find_by_date(r['id'],r['date_from'] ,r['date_to'])
+                date_f=get_date_object(r['date_from'])
+                date_t=get_date_object(r['date_to'])
+                date_conv =  dumps(getSpending.find_by_date(r['id'],date_f ,date_t),default=date_handler))
+                result = loads(date_conv)
+                return result
                 #call find_by_date
                 # elif r['category']:
                 #     # call find by category
@@ -89,9 +105,14 @@ class SpenTrack(Resource):
         client = vision.ImageAnnotatorClient()
         print(filename)
         result =  main('uploads/' + filename)
-        getSpending.insert_spending_record(id,loads(result)) 
+        #for key,value in result.items():
+        #    if key == 'Date':
+        #        tmp = value.split('/')
+        #        date = datetime.date(int(y[0]),int(y[1]),int(y[2]))
+        #        result[key] = date
+        getSpending.insert_spending_record(id,loads(result))
+        #return dumps(result,default=date_handler)
         return result
-        
 api.add_resource(SpenTrack, '/spentrack') # Route_1
 
 if __name__ == '__main__':

@@ -37,6 +37,7 @@ def is_total(number):
 def detect_text(path):
 
     """Detects text in the file."""
+    possible_total_list = []
     receipt_info={}
     client = vision.ImageAnnotatorClient()
 
@@ -77,6 +78,7 @@ def detect_text(path):
 
     # print("Total value is:",total_value)
     total_value = max(possible_total_list)
+    total_value = format(total_value, '.2f')
     # print("Total value is:",total_value)
     receipt_info['Total'] = total_value
 
@@ -122,6 +124,7 @@ def detect_text(path):
 
     return receipt_info
 
+
 #MAIN execution --------------------------------------------------------------------------------------------------
 
 #process receipt using google vision api to obtain a DICT containing: total, shop_name, date, postal_code
@@ -156,10 +159,13 @@ def main(path):
 
         new_receipt.update(placesInfoDict) #appends the places data to the remaining receipt dict data
         receipt_and_place_data_JSON = json.dumps(new_receipt) #Transform final dict with data to store to db to JSON
+
         print ("JSON of data combined to be stored to db: ")
+
         return (json.dumps(new_receipt,ensure_ascii=False))
     else:
         new_receipt.pop('Postal Code', None)
         receipt_and_place_data_JSON = json.dumps(new_receipt)  # Transform final dict with data to store to db to JSON
+                
         print ("JSON of data combined to be stored to db: ")
         return (json.dumps(new_receipt,ensure_ascii=False))
