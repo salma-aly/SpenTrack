@@ -84,7 +84,7 @@ class SpenTrack(Resource):
                 date_f=get_date_object(r['date_from'])
                 date_t=get_date_object(r['date_to'])
                 print (date_f)
-                get = getSpending.find_by_date(id),date_f ,date_t) 
+                get = getSpending.find_by_date(id,date_f ,date_t) 
                 date_conv =  dumps(get,default=date_handler)
                 result = loads(date_conv)
                 return result
