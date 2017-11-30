@@ -2,7 +2,7 @@ import io
 import os
 import re
 import pymongo
-
+import datetime
 # Imports the Google Cloud client library
 from google.cloud import vision
 from google.cloud.vision import types
@@ -38,51 +38,50 @@ db=dbclient['spentrack']
 
 #query by date (take userid)
 def find_by_date(userid, date_from,date_to):
-	values=[]
-	# 3cases
-	for post in db[userid].find({"date": {"$lt": date_to, "$gt":date_from}}):
-		values.append(post)
-		pprint.pprint(post)
-	return values
+    values=[]
+    for post in db[userid].find({"Date": {"$lt": date_to, "$gt":date_from}}):
+	values.append(post)
+	pprint.pprint(post)
+    return values
 
 #query by shop name
-def find_by_shopName(userid, shopname):
-	values=[]
-	for post in db[userid].find({'shop':shopname}):
-		values.append(post)
-		pprint.pprint(post)
-	return values
+def find_by_shop_name(userid, shopname):
+    values=[]
+    for post in db[userid].find({'Shop Name':shopname}):
+	values.append(post)
+	pprint.pprint(post)
+    return values
 
-def find_by_categoryName(userid, categoryname):
-	values=[]
-	for post in db[userid].find({'user':userid, 'category':categoryname}):
-		values.append(post)
-		pprint.pprint(post)
-	return values
+def find_by_category_name(userid, categoryname):
+    values=[]
+    for post in db[userid].find({'Category':categoryname}):
+	values.append(post)
+	pprint.pprint(post)
+    return values
 
 def find_by_date_and_categoryName(userid, categoryname):
-	values=[]
-	for post in db[userid].find({'user':userid, ,"date": {"$lt": date_to, "$gt":date_from},'category':categoryname}):
-		values.append(post)
-		pprint.pprint(post)
-	return values
+    values=[]
+    for post in db[userid].find({"Date": {"$lt": date_to, "$gt":date_from},'Category':categoryname}):
+	values.append(post)
+	pprint.pprint(post)
+    return values
 
-def find_by_date_and_shopName(userid,shopname):
-	values=[]
-	for post in db[userid].find({'user':userid, ,"date": {"$lt": date_to, "$gt":date_from},'shop':shopname}):
-		values.append(post)
-		pprint.pprint(post)
-	return values
+def find_by_date_and_shop_name(userid,shopname):
+    values=[]
+    for post in db[userid].find("Date": {"$lt": date_to, "$gt":date_from},'Shop Name':shopname}):
+	values.append(post)
+	pprint.pprint(post)
+    return values
 
 #query by area ?
 #query by category ?
 
 def get_all_spending(userid):
-	values=[]
-	for post in db[userid].find({'user':userid}):
-		values.append(post)
-		pprint.pprint(post)
-	return values
+    values=[]
+    for post in db[userid].find():
+	values.append(post)
+	pprint.pprint(post)
+    return values
 
 # def get_multifield_spending(userid, params):
 # 	values=[]
@@ -105,11 +104,13 @@ def get_all_spending(userid):
 # 		values.append(post)
 # 		pprint.pprint(post)
 # 	return values
-
-
-def insert_sepnding_record(userid,record):
-	collection=db[userid]
-	collection.insert(record)
+def date_handler(x):
+    if isinstance(x,datetime.date):
+        return x.isoformat()
+    raise TypeError("unknown type")
+def insert_spending_record(userid,record):
+    collection=db[userid]
+    collection.insert(record)
 
 
 
