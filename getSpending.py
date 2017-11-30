@@ -107,7 +107,7 @@ def get_all_spending(userid):
 # 	return values
 
 
-def insert_sepnding_record(userid,record):
+def insert_spending_record(userid,record):
 	collection=db[userid]
 	collection.insert(record)
 
