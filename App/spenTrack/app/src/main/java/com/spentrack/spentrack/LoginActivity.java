@@ -114,7 +114,7 @@ public class LoginActivity extends AppCompatActivity implements
         TakePicturePageButton  = (Button) findViewById(R.id.cam);
         TakePicturePageButton.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v) {
-                gotoTakePicture();
+                gotoListViewTestActivity();
             }
         });
 
@@ -143,6 +143,11 @@ public class LoginActivity extends AppCompatActivity implements
 
     public void gotoTakePicture() {
         Intent intent = new Intent(this, TakePicture.class);
+        startActivity(intent);
+    }
+
+    public void gotoListViewTestActivity() {
+        Intent intent = new Intent(this, ListViewTestActivity.class);
         startActivity(intent);  //starts MainActivity
     }
 
