@@ -3,6 +3,8 @@ import os
 import re
 import pymongo
 import datetime
+import pprint
+import json
 # Imports the Google Cloud client library
 from google.cloud import vision
 from google.cloud.vision import types
@@ -39,38 +41,39 @@ db=dbclient['spentrack']
 #query by date (take userid)
 def find_by_date(userid, date_from,date_to):
     values=[]
-    for post in db[userid].find({"Date": {"$lt": date_to, "$gt":date_from}}):
-	values.append(post)
-	pprint.pprint(post)
+    print(date_from)
+    for post in db[userid].find({"Date": {"$gte": date_from, "$lt":date_to}}):
+        values.append(post)
+#	pprint.pprint(post)
     return values
 
 #query by shop name
 def find_by_shop_name(userid, shopname):
     values=[]
     for post in db[userid].find({'Shop Name':shopname}):
-	values.append(post)
-	pprint.pprint(post)
+        values.append(post)
+        pprint.pprint(post)
     return values
 
 def find_by_category_name(userid, categoryname):
     values=[]
     for post in db[userid].find({'Category':categoryname}):
-	values.append(post)
-	pprint.pprint(post)
+        values.append(post)
+        pprint.pprint(post)
     return values
 
 def find_by_date_and_categoryName(userid, categoryname):
     values=[]
-    for post in db[userid].find({"Date": {"$lt": date_to, "$gt":date_from},'Category':categoryname}):
-	values.append(post)
-	pprint.pprint(post)
+    for post in db[userid].find({"Date": {"$lt": date_to, "$gte":date_from},'Category':categoryname}):
+        values.append(post)
+        pprint.pprint(post)
     return values
 
 def find_by_date_and_shop_name(userid,shopname):
     values=[]
-    for post in db[userid].find("Date": {"$lt": date_to, "$gt":date_from},'Shop Name':shopname}):
-	values.append(post)
-	pprint.pprint(post)
+    for post in db[userid].find({"Date": {"$lt": date_to, "$gte":date_from},'Shop Name':shopname}):
+        values.append(post)
+        pprint.pprint(post)
     return values
 
 #query by area ?
@@ -79,8 +82,8 @@ def find_by_date_and_shop_name(userid,shopname):
 def get_all_spending(userid):
     values=[]
     for post in db[userid].find():
-	values.append(post)
-	pprint.pprint(post)
+        values.append(post)
+        pprint.pprint(post)
     return values
 
 # def get_multifield_spending(userid, params):
@@ -109,8 +112,14 @@ def date_handler(x):
         return x.isoformat()
     raise TypeError("unknown type")
 def insert_spending_record(userid,record):
+    r = record
+    for key,value in r.items():
+        if key == 'Date':
+            y = value.split('/')
+            date = datetime.datetime(int(y[0]),int(y[1]),int(y[2]),0,0)
+            r[key] = date
     collection=db[userid]
-    collection.insert(record)
+    collection.insert(r)
 
 
 
@@ -118,5 +127,3 @@ def insert_spending_record(userid,record):
 def close_db():
 	# close the connection to MongoDB
 	connection.close()
-
-#close db

@@ -16,6 +16,7 @@ from receiptInfo import main
 import getSpending
 import datetime
 
+
 dbclient = pymongo.MongoClient('35.196.76.140',27017,connect=False)
 application = Flask(__name__)
 api = Api(application)
@@ -48,6 +49,7 @@ def validate_token(token):
 
 def get_date_object(date_string):
     #11\/28\/17
+    date_string = str(date_string)
     datearray=date_string.split("/")
     day=int(datearray[1])
     month=int(datearray[0])
@@ -67,20 +69,23 @@ class SpenTrack(Resource):
         if 'id' in r and 'request_type' in r and r['request_type']=='spending_query':
             #result=get_multifield_spending(userid,r)
             #return result
+            id = str(r['id']
             if 'shop_name' in r:
                 print(r['shop_name'])
-                return getSpending.find_by_shop_name(r['id'],r['shop_name'])
+                return getSpending.find_by_shop_name(id,r['shop_name'])
 
             if 'category_name' in r:
                 print(r['category_name'])
-                return getSpending.find_by_category_name(r['id'],r['category_name'])
+                return getSpending.find_by_category_name(id,r['category_name'])
 
                 #call the find_by_shop_name_function
             elif 'date_from' in r  and 'date_to' in r and 'id' in r:
                 print(r['date_from'] ,r['date_to'])
                 date_f=get_date_object(r['date_from'])
                 date_t=get_date_object(r['date_to'])
-                date_conv =  dumps(getSpending.find_by_date(r['id'],date_f ,date_t),default=date_handler))
+                print (date_f)
+                get = getSpending.find_by_date(id),date_f ,date_t) 
+                date_conv =  dumps(get,default=date_handler)
                 result = loads(date_conv)
                 return result
                 #call find_by_date
@@ -92,7 +97,7 @@ class SpenTrack(Resource):
         else:
             return "Unauthorized"
     def post(self):
-        id = "121232334234534523543453452324545432234"
+        id = "1"
        # r = request.get_data()
        # if r['notes']:
        #     id = validate_token(r['notes'])
