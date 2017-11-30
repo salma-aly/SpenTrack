@@ -2,11 +2,17 @@ package com.spentrack.spentrack;
 
 import android.content.pm.PackageManager;
 import android.support.v4.content.FileProvider;
+import android.text.Html;
 import android.widget.Button;
 
         import java.io.File;
         import java.io.IOException;
-        import java.text.SimpleDateFormat;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
         import java.util.Date;
         import java.util.List;
 
@@ -26,11 +32,17 @@ import android.widget.Button;
         import android.view.View;
         import android.widget.Button;
         import android.widget.ImageView;
-        import android.widget.VideoView;
+import android.widget.TextView;
+import android.widget.VideoView;
 
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
+import java.net.URLEncoder;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import cz.msebera.android.httpclient.Header;
 import cz.msebera.android.httpclient.entity.StringEntity;
@@ -38,6 +50,7 @@ import cz.msebera.android.httpclient.message.BasicHeader;
 import cz.msebera.android.httpclient.protocol.HTTP;
 
 import static com.loopj.android.http.AsyncHttpClient.log;
+
 
 
 public class MainActivity extends Activity {
@@ -64,6 +77,9 @@ public class MainActivity extends Activity {
 
     private AlbumStorageDirFactory mAlbumStorageDirFactory = null;
 
+    public TextView testPicReturn;
+    public TextView testPicReturnGoogleURL;
+    public TextView linkShopWebsite;
 
     /* Photo album for this application */
     private String getAlbumName() {
@@ -108,21 +124,95 @@ public class MainActivity extends Activity {
     public void postpicture(){
         AsyncHttpClient client = new AsyncHttpClient();
         try {
+            testPicReturn.setText("Retrieving data from receipt...");
+            linkShopWebsite.setText("");
+            testPicReturnGoogleURL.setText("");
             RequestParams params = new RequestParams();
             File myFile = new File(mCurrentPhotoPath);
             params.put("media",myFile);
             client.post("http://104.196.62.234:8080/spentrack",params, new AsyncHttpResponseHandler() {
                 //client.get(urlString,params, new AsyncHttpResponseHandler() {
+
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                     String content = new String(responseBody);
-                    Log.w("here", content);
+                    log.w("Response Body as String",content);
+
+                    String content_notwrapped_by_quotes = content.replaceAll("^\"|\"$", "");
+                    content = content_notwrapped_by_quotes.replaceAll("\\\\\"", "\"");
+
+                    JSONObject content_inJSON= null;
+                    try {
+                        content_inJSON = new JSONObject(content);
+                        String extractedTotal =content_inJSON.getString( "Total");
+                        String extractedDate =content_inJSON.getString( "Date");
+                        String extractedShopName =content_inJSON.getString( "Shop Name");
+                        String extractedAddress =content_inJSON.getString( "Address");
+                        String extractedCategory=content_inJSON.getString( "Category");
+                        String extractedPhoneNumber =content_inJSON.getString( "Telephone number");
+                        String extractedWebsite =content_inJSON.getString( "Website");
+                        String extractedURLtoGoogleMaps =content_inJSON.getString( "See place on google maps");
+                        String extractedRating=content_inJSON.getString( "Rating");
+
+                        //map categories names given from the server to a user friendly syntax to be displayed on the android app
+                        String catgegory;
+                        switch (extractedCategory) {
+                            case "restaurant":  catgegory = "Restaurant";
+                                break;
+                            case "cafe":  catgegory = "Cafe";
+                                break;
+                            case "clothing_store":  catgegory = "Clothing Store";
+                                break;
+                            case "furniture_store":  catgegory = "Furniture Store";
+                                break;
+                            case "hair_care":  catgegory= "Hair Care";
+                                break;
+                            case "grocery_or_supermarket":  catgegory = "Grocery";
+                                break;
+                            case "electronics_store":  catgegory = "Electronics Store";
+                                break;
+                            case "museum":  catgegory = "Museum";
+                                break;
+                            case "pharmacy":  catgegory = "Pharmacy";
+                                break;
+                            case "store":  catgegory = "Store";
+                                break;
+                            default: catgegory = "Other";
+                                break;
+                        }
+
+                        testPicReturn.setText("Data retrieved from receipt: \n\n" +
+                                "Total: " + extractedTotal +"$\n" +
+                                "Date: " + extractedDate + "\n" +
+                                "Shop Name: " + extractedShopName+ "\n" +
+                                "Address: " + extractedAddress+ "\n" +
+                                "Category: " + catgegory+ "\n" +
+                                "Telephone number: " + extractedPhoneNumber+ "\n" +
+                                "Rating: " + extractedRating+ "\n");
+                        linkShopWebsite.setText("See shop's website: \n" + extractedWebsite+ "\n");
+                        testPicReturnGoogleURL.setText("See shop's location on google maps: \n" + extractedURLtoGoogleMaps);
+
+
+//                         extractedTotal = "";
+//                         extractedDate ="";
+//                         extractedShopName ="";
+//                        extractedAddress ="";
+//                         extractedCategory=content_inJSON.getString( "Category");
+//                         extractedPhoneNumber =content_inJSON.getString( "Telephone number");
+//                         extractedWebsite =content_inJSON.getString( "Website");
+//                         extractedURLtoGoogleMaps =content_inJSON.getString( "See place on google maps");
+//                         extractedRating=content_inJSON.getString( "Rating");
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
 
                 }
 
                 @Override
                 public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                    Log.w("here", error);
+                    Log.w("ERRRRRRRRRRRRRRRRRROR", error);
+                    testPicReturn.setText("Failed to process receipt:" +error);
 
                 }
             });
@@ -310,6 +400,28 @@ public class MainActivity extends Activity {
         mVideoView = (VideoView) findViewById(R.id.videoView1);
         mImageBitmap = null;
         mVideoUri = null;
+
+        testPicReturn = (TextView) findViewById(R.id.testPicReturn);
+        testPicReturnGoogleURL = (TextView) findViewById(R.id.testPicReturnGoogleURL);
+        linkShopWebsite = (TextView) findViewById(R.id.linkShopWebsite);
+
+
+//        String testJSON = "{\"Website\": \"https://www.montrealkoreanfood.com/\", \"Shop Name\": \"\\u00c9picerie Cor\\u00e9enne et Japonaise (\\ud55c\\uad6d\\uc2dd\\ud488)\", \"Total\": 7.98, \"Category\": \"grocery_or_supermarket\", \"Telephone number\": \"(514) 779-7456\", \"Date\": \"2017/11/01\", \"See place on google maps\": \"https://maps.google.com/?cid=5463033794973654626\", \"Address\": \"1829 Rue Sainte-Catherine O, Montr\\u00e9al, QC H3H 1M6, Canada\", \"Rating\": \"4.4\"}";
+//        System.out.print("TEST_JSON" + testJSON);
+//        log.w("TEST_JSON", testJSON);
+
+//        try {
+//            JSONObject obj = new JSONObject(testJSON);
+//            String shopname = obj.getString("Shop Name");
+//            String linkOnGoogleMaps = obj.getString("See place on google maps");
+
+
+//            testPicReturnGoogleURL.setText(linkOnGoogleMaps);
+
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+
 
         Button picBtn = (Button) findViewById(R.id.btnIntend);
         setBtnListenerOrDisable(

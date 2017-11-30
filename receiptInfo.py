@@ -125,41 +125,40 @@ def detect_text(path):
 #MAIN execution --------------------------------------------------------------------------------------------------
 
 #process receipt using google vision api to obtain a DICT containing: total, shop_name, date, postal_code
-def main(path):
-    new_receipt= detect_text(path)
-    print ("Dictionary from Receipt - vision api: ")
-    print (new_receipt)
-    print ("\n")
-    #total, shop_name, date, postal_code
-    # print (new_receipt['total'])
+new_receipt= detect_text(image_path)
+print ("Dictionary from Receipt - vision api: ")
+print (new_receipt)
+print ("\n")
+#total, shop_name, date, postal_code
+# print (new_receipt['total'])
 
-    #process receipt data using google places api to obtain precise and more information about the place
+#process receipt data using google places api to obtain precise and more information about the place
 
-    # if(new_receipt["postal_code"]!=""):
-    query_result = getPlace(new_receipt['Shop Name'], new_receipt["Postal Code"])
-    # else:
-
+# if(new_receipt["postal_code"]!=""):
+query_result = getPlace(new_receipt['Shop Name'], new_receipt["Postal Code"])
+# else:
 
 
-    placesInfoDict = getPlaceInfo(query_result)
-    print ("Dict from Place - places api: ")
-    print(placesInfoDict)
-    print ("\n")
 
-    if (placesInfoDict!=None):
+placesInfoDict = getPlaceInfo(query_result)
+print ("Dict from Place - places api: ")
+print(placesInfoDict)
+print ("\n")
 
-        #Obtain final JSON with spending and place data
-        #only get total and date from result of vision API dict
-        new_receipt.pop('Shop Name', None)
-        new_receipt.pop('Postal Code', None)
-        # print (new_receipt)
+if (placesInfoDict!=None):
 
-        new_receipt.update(placesInfoDict) #appends the places data to the remaining receipt dict data
-        receipt_and_place_data_JSON = json.dumps(new_receipt) #Transform final dict with data to store to db to JSON
-        print ("JSON of data combined to be stored to db: ")
-        return (json.dumps(new_receipt, indent=4, ensure_ascii=False))
-    else:
-        new_receipt.pop('Postal Code', None)
-        receipt_and_place_data_JSON = json.dumps(new_receipt)  # Transform final dict with data to store to db to JSON
-        print ("JSON of data combined to be stored to db: ")
-        return (json.dumps(new_receipt, indent=4, ensure_ascii=False))
+    #Obtain final JSON with spending and place data
+    #only get total and date from result of vision API dict
+    new_receipt.pop('Shop Name', None)
+    new_receipt.pop('Postal Code', None)
+    # print (new_receipt)
+
+    new_receipt.update(placesInfoDict) #appends the places data to the remaining receipt dict data
+    receipt_and_place_data_JSON = json.dumps(new_receipt) #Transform final dict with data to store to db to JSON
+    print ("JSON of data combined to be stored to db: ")
+    print (json.dumps(new_receipt, indent=4, ensure_ascii=False))
+else:
+    new_receipt.pop('Postal Code', None)
+    receipt_and_place_data_JSON = json.dumps(new_receipt)  # Transform final dict with data to store to db to JSON
+    print ("JSON of data combined to be stored to db: ")
+    print (json.dumps(new_receipt, indent=4, ensure_ascii=False))
