@@ -2,6 +2,7 @@ package com.spentrack.spentrack;
 
 import android.annotation.TargetApi;
 import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.icu.text.SimpleDateFormat;
 import android.icu.util.Calendar;
@@ -183,6 +184,7 @@ public class ShowSpending extends AppCompatActivity {
 
         JSONObject jsonParams = set_request_params();
         log.w("json params are : ", jsonParams.toString());
+        boolean successed=false;
 //
 //        AsyncHttpClient client = new AsyncHttpClient();
 //        try {
@@ -225,9 +227,22 @@ public class ShowSpending extends AppCompatActivity {
 
                 public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                     Log.w("here", "success");
-                    String content = new String(responseBody);
+                    final String content = new String(responseBody);
                     Log.w("here", content);
+                    //send contetn to list view activity
                     displayResponse(content);
+
+                    ShowSpending.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Log.d("d",
+                                    "Starting new activity!");
+                            Intent intent = new Intent(getApplicationContext(),
+                                    ListViewTestActivity.class);
+                            intent.putExtra("KEY",content);
+                            ShowSpending.this.startActivity(intent);
+                        }
+                    });
 
                 }
 
@@ -236,6 +251,8 @@ public class ShowSpending extends AppCompatActivity {
                     Log.w("here fail", error);
                     displayResponse("oops! an error has occured");
                 }
+
+
             });
         }
         catch (Exception e) {
@@ -243,6 +260,8 @@ public class ShowSpending extends AppCompatActivity {
             System.out.println(e.getMessage());
 
         }
+
+
 
         //update ui
     }
