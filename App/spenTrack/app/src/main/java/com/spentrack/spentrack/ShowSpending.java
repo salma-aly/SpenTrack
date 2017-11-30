@@ -215,7 +215,8 @@ public class ShowSpending extends AppCompatActivity {
 
             StringEntity entity = new StringEntity(jsonParams.toString());
             entity.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
-            //log.d("SHOP NAME IS:", getParams());
+            //log.d("
+            // SHOP NAME IS:", getParams());
 
             //client.get("http://35.196.214.140:8080/spentrack",params, new AsyncHttpResponseHandler() {
             client.get(this,"http://104.196.62.234:8080/spentrack",entity,"application/json", new AsyncHttpResponseHandler() {

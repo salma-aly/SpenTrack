@@ -12,7 +12,8 @@ import os
 from google.oauth2 import id_token
 from google.auth.transport import requests
 from receiptInfo import main
-from getSpending import find_by_shop_name , get_multifield_spending
+from getSpending import find_by_shop_name 
+import datetime
 
 dbclient = pymongo.MongoClient('35.196.76.140',27017,connect=False)
 application = Flask(__name__)
@@ -44,6 +45,13 @@ def validate_token(token):
     except ValueError:
         return "Invalid token"
 
+def get_date_object(date_string):
+    #11\/28\/17
+    datearray=date_string.split("\/")
+    day=int(datearray[1])
+    month=int(datearray[0])
+    year=int('20'+datearray[2])
+    return datetime.date(year,month,day)
 
 class SpenTrack(Resource):    
     def get(self):
@@ -51,23 +59,28 @@ class SpenTrack(Resource):
         if r['notes']:
             id = validate_token(r['notes'])
             return(id)
-        #if r['request_type']=='spending_query':
+        if r['request_type']=='spending_query':
             #result=get_multifield_spending(userid,r)
             #return result
-        if r['shop_name']:
-            print(r['shop_name'])
-            return getSpending.find_by_shop_name(r['id'],r[shop_name])
+            if r['shop_name']:
+                print(r['shop_name'])
+                return getSpending.find_by_shop_name(r['id'],r['shop_name'])
 
-            #call the find_by_shop_name_function
-        elif r['date_from'] and r['date_to']:
+            if r['category_name']:
+                print(r['category_name'])
+                return getSpending.find_by_shop_name(r['id'],r['shop_name'])
 
-            print(r['date_from'] ,r['date_to'])
-            return getSpending.find_by_shop_name(r['id'],r['date_from'] ,r['date_to'])
-            #call find_by_date
-            # elif r['category']:
-            #     # call find by category
-            # else:
-            #     # find all spending
+                #call the find_by_shop_name_function
+            elif r['date_from'] and r['date_to']:
+                print(r['date_from'] ,r['date_to'])
+                date_f=get_date_object(r['date_from'])
+                date_t=get_date_object(r['date_to'])
+                return getSpending.find_by_shop_name(r['id'],date_f,date_t)
+                #call find_by_date
+                # elif r['category']:
+                #     # call find by category
+                # else:
+                #     # find all spending
 
         else:
             return "Unauthorized"
