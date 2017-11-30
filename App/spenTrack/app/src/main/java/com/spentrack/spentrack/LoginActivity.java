@@ -107,7 +107,7 @@ public class LoginActivity extends AppCompatActivity implements
         TakePicturePageButton  = (Button) findViewById(R.id.cam);
         TakePicturePageButton.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v) {
-                gotoTakePicture();
+                gotoListViewTestActivity();
             }
         });
 
@@ -127,6 +127,11 @@ public class LoginActivity extends AppCompatActivity implements
 
     public void gotoTakePicture() {
         Intent intent = new Intent(this, TakePicture.class);
+        startActivity(intent);
+    }
+
+    public void gotoListViewTestActivity() {
+        Intent intent = new Intent(this, ListViewTestActivity.class);
         startActivity(intent);  //starts MainActivity
     }
 
@@ -178,7 +183,7 @@ public class LoginActivity extends AppCompatActivity implements
                 jsonParams.put("notes", idToken);
                 StringEntity entity = new StringEntity(jsonParams.toString());
                 entity.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
-                client.get(this,"http://35.196.214.140:8080/spentrack",entity,"application/json", new AsyncHttpResponseHandler() {
+                client.get(this,"http://104.196.62.234:8080/spentrack",entity,"application/json", new AsyncHttpResponseHandler() {
                 //client.get(urlString,params, new AsyncHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
