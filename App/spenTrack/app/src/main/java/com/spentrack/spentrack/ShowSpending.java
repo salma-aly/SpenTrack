@@ -21,6 +21,7 @@ import android.widget.TextView;
 
 import com.loopj.android.http.*;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -89,8 +90,8 @@ public class ShowSpending extends AppCompatActivity {
         spinner1 = (Spinner) findViewById(R.id.spinner1);
         spinner2=(Spinner)findViewById(R.id.spinner2);
         addListenerOnSpinnerItemSelection();
-        addItemsOnSpinner2();
-        //add on click listner for spinner 2 if it works 
+        //addItemsOnSpinner2();
+        //add on click listner for spinner 2 if it works
         responseText=(TextView)findViewById(R.id.data_text_view);
 
         dateFromText=(EditText)findViewById(R.id.date_from_edit_text);
@@ -153,42 +154,24 @@ public class ShowSpending extends AppCompatActivity {
     }
 
     private void onshopNameChecked(){
-        spinner1.setVisibility(View.VISIBLE);
-        spinner1.setEnabled(true);
-        spinner2.setVisibility(View.INVISIBLE);
-        spinner2.setEnabled(false);
+        spinner2.setVisibility(View.VISIBLE);
+        spinner2.setEnabled(true);
+        spinner1.setVisibility(View.INVISIBLE);
+        spinner1.setEnabled(false);
         categoryCheck.setChecked(false);
     }
 
     private void onCategoryChecked(){
-        spinner1.setVisibility(View.INVISIBLE);
-        spinner1.setEnabled(false);
-        spinner2.setVisibility(View.VISIBLE);
-        spinner2.setEnabled(true);
+        spinner2.setVisibility(View.INVISIBLE);
+        spinner2.setEnabled(false);
+        spinner1.setVisibility(View.VISIBLE);
+        spinner1.setEnabled(true);
         shopNameCheck.setChecked(false);
     }
 
-    public void addItemsOnSpinner2() {
-
-//        SharedPreferences ShopPrefs = getSharedPreferences("shopNamesList", MODE_PRIVATE);
-//        Set<String> set = ShopPrefs.getStringSet("key", null);
-//        if(set !=null){
-//            List<String> list = new ArrayList<String>(set);
-//            ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
-//                    android.R.layout.simple_spinner_item, list);
-//            dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//            spinner2.setAdapter(dataAdapter);
-//        }
-
-        SharedPreferences prefs= getSharedPreferences(USER_ID, MODE_PRIVATE);
-        String shopnames=prefs.getString("shopnames","");
-        ArrayList<String> list= new ArrayList<>(Arrays.asList(shopnames.split(",")));
-        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
-                    android.R.layout.simple_spinner_item, list);
-            dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            spinner2.setAdapter(dataAdapter);
-
-    }
+//    public void addItemsOnSpinner2() {
+//
+//    }
 
 
     private void GetSpending() {
@@ -242,18 +225,37 @@ public class ShowSpending extends AppCompatActivity {
                     Log.w("here", content);
                     //send contetn to list view activity
                     displayResponse(content);
+                    Log.w("printing content",content+content.length());
+                    try {
+                        JSONArray myTestJSONArray = new JSONArray(content);
+                        log.w("lengthxxxxxxxxxxxxxxxxxxxxx",myTestJSONArray.length()+"");
+                        JSONObject myObject = myTestJSONArray.getJSONObject(0);
+                        String address = myObject.getString("Address");
+                        log.w("adreess!!!!!: ", address);
 
-                    ShowSpending.this.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Log.d("d",
-                                    "Starting new activity!");
-                            Intent intent = new Intent(getApplicationContext(),
-                                    ListViewTestActivity.class);
-                            intent.putExtra("KEY",content);
-                            ShowSpending.this.startActivity(intent);
-                        }
-                    });
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+
+                    }
+                    if(content.length()>3){
+                        ShowSpending.this.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Log.d("d",
+                                        "Starting new activity!");
+                                Intent intent = new Intent(getApplicationContext(),
+                                        ListViewTestActivity.class);
+                                intent.putExtra("KEY",content);
+//                                Bundle extras = intent.getExtras();
+//                                if(extras !=null) {
+//                                    String content2 = extras.getString("KEY");
+//                                    log.w("CONTENT IS", content2);
+//                                }
+                                ShowSpending.this.startActivity(intent);
+                            }
+                        });
+                    }
+
 
                 }
 
@@ -344,16 +346,46 @@ public class ShowSpending extends AppCompatActivity {
             jsonParams.put("date_from",dateFromText.getText());
             jsonParams.put("date_to",dateToText.getText());
             if(shopNameCheck.isChecked()){
-                jsonParams.put("shop_name",spinner1.getSelectedItem().toString());
+                jsonParams.put("Shop Name",spinner2.getSelectedItem().toString());
             }else if (categoryCheck.isChecked()){
-                if(spinner2.getSelectedItem()!=null)
-                jsonParams.put("category_name",spinner2.getSelectedItem().toString());
+                if(spinner1.getSelectedItem()!=null)
+                jsonParams.put("Category",MapCategory(spinner1.getSelectedItem().toString()));
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
         return jsonParams;
+    }
+
+    private String MapCategory(String s ){
+
+        String catgegory="";
+        switch (s) {
+            case "Restaurant":  catgegory = "restaurant";
+                break;
+            case "Cafe":  catgegory = "cafe";
+                break;
+            case "Clothing Store":  catgegory = "clothing_store";
+                break;
+            case "Furniture Store":  catgegory = "furniture_store";
+                break;
+            case "Hair Care":  catgegory= "hair_care";
+                break;
+            case "Grocery":  catgegory = "grocery_or_supermarket";
+                break;
+            case "ElectronicsStore":  catgegory = "electronics_store";
+                break;
+            case "Museum":  catgegory = "museum";
+                break;
+            case "Pharmacy":  catgegory = "pharmacy";
+                break;
+            case "Store":  catgegory = "store";
+                break;
+            default: catgegory = "Other";
+                break;
+        }
+         return catgegory;
     }
 
 }

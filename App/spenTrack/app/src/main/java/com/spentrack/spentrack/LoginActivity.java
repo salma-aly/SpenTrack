@@ -111,12 +111,12 @@ public class LoginActivity extends AppCompatActivity implements
         signInButton.setColorScheme(SignInButton.COLOR_LIGHT);
         // [END customize_button]
 
-        TakePicturePageButton  = (Button) findViewById(R.id.cam);
-        TakePicturePageButton.setOnClickListener(new View.OnClickListener(){
-            public void onClick(View v) {
-                gotoListViewTestActivity();
-            }
-        });
+//        TakePicturePageButton  = (Button) findViewById(R.id.cam);
+//        TakePicturePageButton.setOnClickListener(new View.OnClickListener(){
+//            public void onClick(View v) {
+//                gotoListViewTestActivity();
+//            }
+//        });
 
         mainPageButton  = (Button) findViewById(R.id.title_text);
         mainPageButton.setOnClickListener(new View.OnClickListener(){

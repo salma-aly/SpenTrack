@@ -22,7 +22,7 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".LoginActivity"
-            android:label="@string/title_activity_login"
+            android:label="SpenTrack"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -49,6 +49,9 @@
         >>>>>>> ce8c84b3f785324246827447b173e4ba3c6b47c8
         ]]>
         <activity android:name=".ShowSpending"></activity>
+        <activity
+            android:name=".ListViewTestActivity"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

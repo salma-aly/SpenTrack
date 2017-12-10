@@ -12,15 +12,17 @@
         <Button android:text="@string/btnIntend" android:id="@+id/btnIntend"
             android:layout_height="wrap_content"
             android:layout_width="0dp"
-            android:layout_weight="1" />
-        <Button android:text="@string/btnIntendS" android:id="@+id/btnIntendS"
+            android:layout_weight="1"
+            android:visibility="gone"/>
+        <Button android:text="Take Another Picture" android:id="@+id/btnIntendS"
             android:layout_height="wrap_content"
             android:layout_width="0dp"
             android:layout_weight="1" />
         <Button android:text="@string/btnIntendV" android:id="@+id/btnIntendV"
             android:layout_height="wrap_content"
             android:layout_width="0dp"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:visibility="gone"/>
     </LinearLayout>
 
     <ImageView

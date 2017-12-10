@@ -82,8 +82,6 @@ public class MainActivity extends Activity {
     public TextView testPicReturnGoogleURL;
     public TextView linkShopWebsite;
 
-    SharedPreferences prefs = this.getSharedPreferences(
-            "myprefs", Context.MODE_PRIVATE);
 
     /* Photo album for this application */
     private String getAlbumName() {
@@ -195,7 +193,7 @@ public class MainActivity extends Activity {
                                 "Rating: " + extractedRating+ "\n");
                         linkShopWebsite.setText("See shop's website: \n" + extractedWebsite+ "\n");
                         testPicReturnGoogleURL.setText("See shop's location on google maps: \n" + extractedURLtoGoogleMaps);
-                        addShopName(extractedShopName);
+                        //addShopName(extractedShopName);
 
 
 //                         extractedTotal = "";
@@ -454,6 +452,9 @@ public class MainActivity extends Activity {
         } else {
             mAlbumStorageDirFactory = new BaseAlbumDirFactory();
         }
+
+        dispatchTakePictureIntent();
+
     }
 
     @Override
@@ -545,14 +546,6 @@ public class MainActivity extends Activity {
         }
     }
 
-    private void addShopName(String name){
-        SharedPreferences.Editor editor = prefs.edit();
-        String currShopNames=prefs.getString("shopnames","");
-        String newShopNames=currShopNames+","+name;
-        editor.putString("shopnames",newShopNames);
-        editor.apply();
 
-
-    }
 
 }

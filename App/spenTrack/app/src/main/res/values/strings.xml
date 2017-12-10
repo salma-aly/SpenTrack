@@ -83,5 +83,11 @@
         <item>Store</item>
     </string-array>
 
+    <string-array name="shop_names">
+        <item>Dollarama</item>
+        <item>Bonjour Supermarché</item>
+        <item>Tim Hortons</item>
+    </string-array>
+
 </resources>
 
